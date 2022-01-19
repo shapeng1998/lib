@@ -1,0 +1,41 @@
+{
+  "name": "@shapeng1998/lib",
+  "version": "0.0.1",
+  "description": "Handwritten JavaScript library.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "author": "shapeng1998 <jack@shapeng1998.com>",
+  "license": "MIT",
+  "sideEffects": false,
+  "keywords": [
+    "javascript",
+    "algorithms",
+    "library"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "watch": "pnpm build --watch src",
+    "prepublishOnly": "pnpm build",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "tsup": "^5.11.11",
+    "typescript": "^4.5.4",
+    "vitest": "^0.1.23"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": true
+  }
+}
