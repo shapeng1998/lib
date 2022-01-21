@@ -1,7 +1,6 @@
-export function quickSort<T>(
-  arr: Array<T>,
-  compareFunction: (a: T, b: T) => number
-) {
+type SortFunction = <T>(arr: T[], compare: (a: T, b: T) => number) => T[];
+
+export const quickSort: SortFunction = (arr, compare) => {
   function sort(l: number, r: number) {
     if (l >= r) return;
 
@@ -11,9 +10,9 @@ export function quickSort<T>(
 
     while (i < j) {
       do i++;
-      while (compareFunction(arr[i], x) < 0);
+      while (compare(arr[i], x) < 0);
       do j--;
-      while (compareFunction(arr[j], x) > 0);
+      while (compare(arr[j], x) > 0);
       if (i < j) [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 
@@ -24,4 +23,33 @@ export function quickSort<T>(
   sort(0, arr.length - 1);
 
   return arr;
-}
+};
+
+export const mergeSort: SortFunction = (arr, compare) => {
+  function sort(l: number, r: number) {
+    if (l >= r) return;
+
+    const mid = (l + r) >>> 1;
+    sort(l, mid);
+    sort(mid + 1, r);
+
+    const tmp = new Array(r - l + 1);
+
+    let k = 0;
+    let i = l;
+    let j = mid + 1;
+
+    while (i <= mid && j <= r) {
+      if (compare(arr[i], arr[j]) <= 0) tmp[k++] = arr[i++];
+      else tmp[k++] = arr[j++];
+    }
+    while (i <= mid) tmp[k++] = arr[i++];
+    while (j <= r) tmp[k++] = arr[j++];
+
+    for (let i = l, j = 0; i <= r; i++, j++) arr[i] = tmp[j];
+  }
+
+  sort(0, arr.length - 1);
+
+  return arr;
+};
