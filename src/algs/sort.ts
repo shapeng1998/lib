@@ -1,4 +1,6 @@
-type SortFunction = <T>(arr: T[], compare: (a: T, b: T) => number) => T[];
+import type { CompareFn } from '../utils';
+
+type SortFunction = <T>(arr: T[], compare: CompareFn<T>) => T[];
 
 export const quickSort: SortFunction = (arr, compare) => {
   function sort(l: number, r: number) {

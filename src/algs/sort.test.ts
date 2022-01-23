@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { getRandomNumber } from '../utils';
+import { getRandomArray } from '../utils';
 import { quickSort, mergeSort } from './sort';
 
 describe('Sorting algorithms', () => {
-  const nums = Array.from({ length: 10 }, () => getRandomNumber(-100, 100));
+  const nums = getRandomArray(10, -100, 100);
 
   it('Quick sort', () => {
     expect(quickSort([...nums], (a, b) => a - b)).toEqual(
