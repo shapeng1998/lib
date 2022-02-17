@@ -1,6 +1,6 @@
 {
   "name": "@shapeng1998/lib",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Personal handwritten JavaScript library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -25,7 +25,8 @@
   "keywords": [
     "javascript",
     "algorithms",
-    "library"
+    "library",
+    "promise"
   ],
   "files": [
     "dist"
@@ -34,9 +35,12 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build --watch src",
     "prepublishOnly": "pnpm build",
-    "test": "vitest"
+    "test": "vitest",
+    "testPromise": "rimraf dist && tsup src/promise/promise.ts --format cjs --clean && promises-aplus-tests dist/promise.js"
   },
   "devDependencies": {
+    "promises-aplus-tests": "^2.1.2",
+    "rimraf": "^3.0.2",
     "tsup": "^5.11.11",
     "typescript": "^4.5.4",
     "vitest": "^0.1.23"
@@ -44,8 +48,5 @@
   "prettier": {
     "singleQuote": true,
     "semi": true
-  },
-  "dependencies": {
-    "v8-promise": "^1.0.5"
   }
 }

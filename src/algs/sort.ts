@@ -1,4 +1,4 @@
-import type { CompareFn } from '../utils';
+import { CompareFn } from './types';
 
 type SortFunction = <T>(arr: T[], compare: CompareFn<T>) => T[];
 

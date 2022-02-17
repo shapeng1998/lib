@@ -1,4 +1,4 @@
-import type { CompareFn } from '../utils';
+import type { CompareFn } from './types';
 
 export class PriorityQueue<T> {
   private heap: T[];
