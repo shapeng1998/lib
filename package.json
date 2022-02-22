@@ -1,6 +1,6 @@
 {
   "name": "@shapeng1998/lib",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Personal handwritten JavaScript library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -26,7 +26,8 @@
     "javascript",
     "algorithms",
     "library",
-    "promise"
+    "promise",
+    "lodash"
   ],
   "files": [
     "dist"
