@@ -1,9 +1,18 @@
-export function debounce(func: Function, wait: number = 0) {
+import { DebouncedFunc } from './types';
+
+export function debounce<T extends (...args: any) => any>(
+  func: T,
+  wait: number = 0
+): DebouncedFunc<T> {
   let timeout: number;
-  return function (...args: any[]) {
-    window.clearTimeout(timeout);
-    timeout = window.setTimeout(() => {
-      func(...args);
+  let res: ReturnType<T>;
+
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      res = func.apply(undefined, args);
     }, wait);
+
+    return res;
   };
 }

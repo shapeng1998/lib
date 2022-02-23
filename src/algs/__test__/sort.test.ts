@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getRandomArray } from '../utils';
-import { quickSort, mergeSort } from './sort';
+import { getRandomArray } from '../../utils';
+import { quickSort, mergeSort } from '../sort';
 
 describe('Sorting algorithms', () => {
   const nums = getRandomArray(10, -100, 100);

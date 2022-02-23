@@ -1,9 +1,18 @@
-export function throttle(func: Function, wait: number = 0) {
-  let start = Date.now();
-  return function (...args: any[]) {
-    if (Date.now() - start >= wait) {
-      start = Date.now();
-      func(...args);
+import { DebouncedFunc } from './types';
+
+export function throttle<T extends (...args: any) => any>(
+  func: T,
+  wait: number = 0
+): DebouncedFunc<T> {
+  let inThrottle = false;
+  let res: ReturnType<T>;
+
+  return function (...args) {
+    if (!inThrottle) {
+      res = func.apply(undefined, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), wait);
     }
+    return res;
   };
 }

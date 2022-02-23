@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getRandomArray } from '../utils';
-import { PriorityQueue } from './priorityQueue';
+import { getRandomArray } from '../../utils';
+import { PriorityQueue } from '../priorityQueue';
 
 describe('Heap algorithms', () => {
   const heap = new PriorityQueue<number>((a, b) => a - b);
