@@ -10,7 +10,8 @@ export class PriorityQueue<T> {
   }
 
   private swap(a: number, b: number) {
-    [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]];
+    const { heap } = this;
+    [heap[a], heap[b]] = [heap[b], heap[a]];
   }
 
   private down(u: number) {
