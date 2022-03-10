@@ -112,6 +112,52 @@ class MyPromise<T> {
 
     return promise;
   }
+
+  static resolve(): MyPromise<void>;
+  static resolve<T>(value: T | MyPromiseLike<T>): MyPromise<T>;
+  static resolve<T>(value?: T | MyPromiseLike<T>): MyPromise<T> {
+    if (value instanceof MyPromise) {
+      return value;
+    }
+
+    return new MyPromise((resolve) => {
+      resolve(value!);
+    });
+  }
+
+  static reject<T = never>(reason?: any): MyPromise<T> {
+    return new MyPromise((_resolve, reject) => {
+      reject(reason);
+    });
+  }
+
+  static all<T>(values: Iterable<T | MyPromiseLike<T>>): MyPromise<T[]> {
+    return new MyPromise((resolve, reject) => {
+      try {
+        const results: T[] = [];
+        let idx = 0;
+        let cnt = 0;
+
+        for (const value of values) {
+          const i = idx++;
+          MyPromise.resolve(value).then((value) => {
+            results[i] = value;
+            cnt++;
+
+            if (cnt === idx) {
+              resolve(results);
+            }
+          }, reject);
+        }
+
+        if (cnt === idx) {
+          resolve(results);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 }
 
 function resolvePromise<T>(

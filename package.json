@@ -1,6 +1,6 @@
 {
   "name": "@shapeng1998/lib",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Personal handwritten JavaScript library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -36,6 +36,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build --watch src",
     "prepublishOnly": "pnpm build",
+    "tempTest": "pnpm build && node onlyForTest.mjs",
     "test": "vitest",
     "testPromise": "rimraf dist && tsup src/promise/promise.ts --format cjs --clean && promises-aplus-tests dist/promise.js"
   },
