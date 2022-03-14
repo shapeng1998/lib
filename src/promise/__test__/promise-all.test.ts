@@ -1,38 +1,22 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import MyPromise from '../promise';
 
-vi.useFakeTimers();
-
 describe('Promise.all test suite', () => {
-  it('basic Promise.all example', () => {
-    let promiseList = [
+  it('basic Promise.all example', async () => {
+    const promiseList = [
       MyPromise.resolve(1),
       MyPromise.resolve(2),
       MyPromise.resolve(3),
       4,
     ];
 
-    let results;
-    MyPromise.all(promiseList).then((value) => {
-      results = value;
-    });
+    const result = await MyPromise.all(promiseList);
+    expect(result).toEqual([1, 2, 3, 4]);
 
-    vi.advanceTimersByTime(0);
-
-    expect(results).toEqual([1, 2, 3, 4]);
-
-    let error;
-    MyPromise.all([promiseList, MyPromise.reject(5)]).then(
-      (value) => {
-        results = value;
-      },
-      (reason) => {
-        error = reason;
-      }
-    );
-
-    vi.advanceTimersByTime(0);
-
-    expect(error).toEqual(5);
+    try {
+      await MyPromise.all([...promiseList, MyPromise.reject(5)]);
+    } catch (e) {
+      expect(e).toEqual(5);
+    }
   });
 });

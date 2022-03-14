@@ -65,47 +65,47 @@ class MyPromise<T> {
 
     const promise = new MyPromise<TResult1 | TResult2>((resolve, reject) => {
       if (this.state === 'FULFILLED') {
-        setTimeout(() => {
+        queueMicrotask(() => {
           try {
             const x = onFulfilled!(this.value);
             resolvePromise(promise, x, resolve, reject);
           } catch (e) {
             reject(e);
           }
-        }, 0);
+        });
       }
 
       if (this.state === 'REJECTED') {
-        setTimeout(() => {
+        queueMicrotask(() => {
           try {
             const x = onRejected!(this.reason);
             resolvePromise(promise, x, resolve, reject);
           } catch (e) {
             reject(e);
           }
-        }, 0);
+        });
       }
 
       if (this.state === 'PENDING') {
         this.onFulfilledCallbacks.push(() => {
-          setTimeout(() => {
+          queueMicrotask(() => {
             try {
               const x = onFulfilled!(this.value);
               resolvePromise(promise, x, resolve, reject);
             } catch (e) {
               reject(e);
             }
-          }, 0);
+          });
         });
         this.onRejectedCallbacks.push(() => {
-          setTimeout(() => {
+          queueMicrotask(() => {
             try {
               const x = onRejected!(this.reason);
               resolvePromise(promise, x, resolve, reject);
             } catch (e) {
               reject(e);
             }
-          }, 0);
+          });
         });
       }
     });

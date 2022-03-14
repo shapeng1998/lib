@@ -13,8 +13,20 @@ describe('Heap algorithms', () => {
 
   it('Pop', () => {
     const sorted = [...nums].sort((a, b) => a - b);
-    for (let i = 0; i < sorted.length; i++) {
+    for (let i = 0; i < 10; i++) {
       expect(heap.pop()).toBe(sorted[i]);
     }
+  });
+
+  it('Null front', () => {
+    expect(heap.size).toBe(0);
+    expect(heap.front()).toBe(null);
+  });
+
+  it('Max heap', () => {
+    const sorted = [1, 2, 3, 4];
+    const maxHeap = new PriorityQueue<number>((a, b) => b - a);
+    sorted.forEach((x) => maxHeap.push(x));
+    expect(maxHeap.front()).toBe(sorted[sorted.length - 1]);
   });
 });
