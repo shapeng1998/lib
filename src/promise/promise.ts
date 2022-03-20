@@ -1,6 +1,7 @@
 import type {
   Callbacks,
   Executor,
+  MyAwaited,
   MyPromiseLike,
   OnFulfilled,
   OnRejected,
@@ -131,17 +132,19 @@ class MyPromise<T> {
     });
   }
 
-  static all<T>(values: Iterable<T | MyPromiseLike<T>>): MyPromise<T[]> {
+  static all<T>(
+    values: Iterable<T | MyPromiseLike<T>>
+  ): MyPromise<MyAwaited<T>[]> {
     return new MyPromise((resolve, reject) => {
       try {
-        const results: T[] = [];
+        const results: MyAwaited<T>[] = [];
         let idx = 0;
         let cnt = 0;
 
         for (const value of values) {
           const i = idx++;
           MyPromise.resolve(value).then((value) => {
-            results[i] = value;
+            results[i] = value as MyAwaited<T>;
             cnt++;
 
             if (cnt === idx) {
