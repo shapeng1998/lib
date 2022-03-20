@@ -1,8 +1,8 @@
 import type {
   Callbacks,
   Executor,
-  MyAwaited,
   MyPromiseLike,
+  OnFinally,
   OnFulfilled,
   OnRejected,
   Reject,
@@ -10,7 +10,7 @@ import type {
   State,
 } from './types';
 
-class MyPromise<T> {
+class MyPromise<T = unknown> {
   private state: State;
   private value: T;
   private reason: any;
@@ -50,16 +50,16 @@ class MyPromise<T> {
   }
 
   then<TResult1 = T, TResult2 = never>(
-    onFulfilled?: OnFulfilled<T, TResult1>,
-    onRejected?: OnRejected<TResult2>
+    onfulfilled?: OnFulfilled<T, TResult1>,
+    onrejected?: OnRejected<TResult2>
   ): MyPromise<TResult1 | TResult2> {
-    onFulfilled =
-      typeof onFulfilled === 'function'
-        ? onFulfilled
+    onfulfilled =
+      typeof onfulfilled === 'function'
+        ? onfulfilled
         : (value: T | TResult1) => value as TResult1;
-    onRejected =
-      typeof onRejected === 'function'
-        ? onRejected
+    onrejected =
+      typeof onrejected === 'function'
+        ? onrejected
         : (reason) => {
             throw reason;
           };
@@ -68,7 +68,7 @@ class MyPromise<T> {
       if (this.state === 'FULFILLED') {
         queueMicrotask(() => {
           try {
-            const x = onFulfilled!(this.value);
+            const x = onfulfilled!(this.value);
             resolvePromise(promise, x, resolve, reject);
           } catch (e) {
             reject(e);
@@ -79,7 +79,7 @@ class MyPromise<T> {
       if (this.state === 'REJECTED') {
         queueMicrotask(() => {
           try {
-            const x = onRejected!(this.reason);
+            const x = onrejected!(this.reason);
             resolvePromise(promise, x, resolve, reject);
           } catch (e) {
             reject(e);
@@ -91,7 +91,7 @@ class MyPromise<T> {
         this.onFulfilledCallbacks.push(() => {
           queueMicrotask(() => {
             try {
-              const x = onFulfilled!(this.value);
+              const x = onfulfilled!(this.value);
               resolvePromise(promise, x, resolve, reject);
             } catch (e) {
               reject(e);
@@ -101,7 +101,7 @@ class MyPromise<T> {
         this.onRejectedCallbacks.push(() => {
           queueMicrotask(() => {
             try {
-              const x = onRejected!(this.reason);
+              const x = onrejected!(this.reason);
               resolvePromise(promise, x, resolve, reject);
             } catch (e) {
               reject(e);
@@ -112,6 +112,29 @@ class MyPromise<T> {
     });
 
     return promise;
+  }
+
+  catch<TResult = never>(
+    onRejected?: OnRejected<TResult>
+  ): MyPromise<T | TResult> {
+    return this.then(undefined, onRejected);
+  }
+
+  finally(onfinally?: OnFinally): MyPromise<T> {
+    if (typeof onfinally !== 'function') {
+      return this.then(onfinally, onfinally);
+    }
+
+    return this.then(
+      (value) => {
+        return MyPromise.resolve(onfinally()).then(() => value);
+      },
+      (reason) => {
+        return MyPromise.resolve(onfinally()).then(() => {
+          throw reason;
+        });
+      }
+    );
   }
 
   static resolve(): MyPromise<void>;
@@ -134,17 +157,17 @@ class MyPromise<T> {
 
   static all<T>(
     values: Iterable<T | MyPromiseLike<T>>
-  ): MyPromise<MyAwaited<T>[]> {
+  ): MyPromise<Awaited<T>[]> {
     return new MyPromise((resolve, reject) => {
       try {
-        const results: MyAwaited<T>[] = [];
+        const results: Awaited<T>[] = [];
+
         let idx = 0;
         let cnt = 0;
-
         for (const value of values) {
           const i = idx++;
           MyPromise.resolve(value).then((value) => {
-            results[i] = value as MyAwaited<T>;
+            results[i] = value as Awaited<T>;
             cnt++;
 
             if (cnt === idx) {
@@ -155,6 +178,91 @@ class MyPromise<T> {
 
         if (cnt === idx) {
           resolve(results);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  static allSettled<T>(
+    values: Iterable<T | MyPromiseLike<T>>
+  ): MyPromise<PromiseSettledResult<Awaited<T>>[]> {
+    return new MyPromise((resolve, reject) => {
+      try {
+        const results: PromiseSettledResult<Awaited<T>>[] = [];
+
+        let idx = 0;
+        let cnt = 0;
+        for (const value of values) {
+          const i = idx++;
+          MyPromise.resolve(value).then(
+            (value) => {
+              results[i] = { status: 'fulfilled', value: value as Awaited<T> };
+              cnt++;
+
+              if (cnt === idx) {
+                resolve(results);
+              }
+            },
+            (reason) => {
+              results[i] = { status: 'rejected', reason };
+              cnt++;
+
+              if (cnt === idx) {
+                resolve(results);
+              }
+            }
+          );
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  static any<T>(values: Iterable<T | MyPromiseLike<T>>): MyPromise<Awaited<T>> {
+    return new MyPromise((resolve, reject) => {
+      try {
+        const errors: T[] = [];
+
+        let idx = 0;
+        let cnt = 0;
+        for (const value of values) {
+          const i = idx++;
+          MyPromise.resolve(value).then(
+            (value) => {
+              resolve(value as Awaited<T>);
+            },
+            (reason) => {
+              errors[i] = reason;
+              cnt++;
+
+              if (cnt === idx) {
+                reject(new AggregateError(errors));
+              }
+            }
+          );
+        }
+
+        if (cnt === idx) {
+          reject(new AggregateError(errors));
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  static race<T>(
+    values: Iterable<T | MyPromiseLike<T>>
+  ): MyPromise<Awaited<T>> {
+    return new MyPromise((resolve, reject) => {
+      try {
+        for (const value of values) {
+          MyPromise.resolve(value).then((value) => {
+            resolve(value as Awaited<T>);
+          }, reject);
         }
       } catch (e) {
         reject(e);
