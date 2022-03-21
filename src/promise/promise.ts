@@ -11,34 +11,27 @@ import type {
 } from './types';
 
 class MyPromise<T = unknown> {
-  private state: State;
-  private value: T;
-  private reason: any;
+  #state: State = 'PENDING';
+  #value: T = undefined as unknown as T;
+  #reason: any = undefined;
 
-  private onFulfilledCallbacks: Callbacks;
-  private onRejectedCallbacks: Callbacks;
+  #onFulfilledCallbacks: Callbacks = [];
+  #onRejectedCallbacks: Callbacks = [];
 
   constructor(executor: Executor<T>) {
-    this.state = 'PENDING';
-    this.value = undefined as unknown as T;
-    this.reason = undefined;
-
-    this.onFulfilledCallbacks = [];
-    this.onRejectedCallbacks = [];
-
     const resolve: Resolve<T> = (value) => {
-      if (this.state === 'PENDING') {
-        this.state = 'FULFILLED';
-        this.value = value as T;
-        this.onFulfilledCallbacks.forEach((cb) => cb());
+      if (this.#state === 'PENDING') {
+        this.#state = 'FULFILLED';
+        this.#value = value as T;
+        this.#onFulfilledCallbacks.forEach((cb) => cb());
       }
     };
 
     const reject: Reject = (reason) => {
-      if (this.state === 'PENDING') {
-        this.state = 'REJECTED';
-        this.reason = reason;
-        this.onRejectedCallbacks.forEach((cb) => cb());
+      if (this.#state === 'PENDING') {
+        this.#state = 'REJECTED';
+        this.#reason = reason;
+        this.#onRejectedCallbacks.forEach((cb) => cb());
       }
     };
 
@@ -65,10 +58,10 @@ class MyPromise<T = unknown> {
           };
 
     const promise = new MyPromise<TResult1 | TResult2>((resolve, reject) => {
-      if (this.state === 'FULFILLED') {
+      if (this.#state === 'FULFILLED') {
         queueMicrotask(() => {
           try {
-            const x = onfulfilled!(this.value);
+            const x = onfulfilled!(this.#value);
             resolvePromise(promise, x, resolve, reject);
           } catch (e) {
             reject(e);
@@ -76,10 +69,10 @@ class MyPromise<T = unknown> {
         });
       }
 
-      if (this.state === 'REJECTED') {
+      if (this.#state === 'REJECTED') {
         queueMicrotask(() => {
           try {
-            const x = onrejected!(this.reason);
+            const x = onrejected!(this.#reason);
             resolvePromise(promise, x, resolve, reject);
           } catch (e) {
             reject(e);
@@ -87,21 +80,21 @@ class MyPromise<T = unknown> {
         });
       }
 
-      if (this.state === 'PENDING') {
-        this.onFulfilledCallbacks.push(() => {
+      if (this.#state === 'PENDING') {
+        this.#onFulfilledCallbacks.push(() => {
           queueMicrotask(() => {
             try {
-              const x = onfulfilled!(this.value);
+              const x = onfulfilled!(this.#value);
               resolvePromise(promise, x, resolve, reject);
             } catch (e) {
               reject(e);
             }
           });
         });
-        this.onRejectedCallbacks.push(() => {
+        this.#onRejectedCallbacks.push(() => {
           queueMicrotask(() => {
             try {
-              const x = onrejected!(this.reason);
+              const x = onrejected!(this.#reason);
               resolvePromise(promise, x, resolve, reject);
             } catch (e) {
               reject(e);
