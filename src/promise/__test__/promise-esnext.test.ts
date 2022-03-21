@@ -47,7 +47,7 @@ describe('Promise ESNext test suite', () => {
   });
 
   it('Promise.any should work', async () => {
-    const promises = [
+    let promises = [
       mySleepResolve(10, 1),
       mySleepReject(20, 2),
       mySleepResolve(30, 3),
@@ -55,11 +55,19 @@ describe('Promise ESNext test suite', () => {
 
     await expect(MyPromise.any(promises)).resolves.toEqual(1);
 
+    promises = [
+      mySleepReject(10, 1),
+      mySleepReject(20, 2),
+      mySleepReject(30, 3),
+    ];
+
     try {
-      await MyPromise.any([...promises, MyPromise.reject(2)]);
+      await MyPromise.any(promises);
     } catch (e) {
-      expect(e).toBeInstanceOf(AggregateError);
-      expect((e as AggregateError).errors).toEqual([1, 2]);
+      expect((e as AggregateError).errors).toEqual([1, 2, 3]);
+      expect((e as AggregateError).message).toEqual(
+        'All promises were rejected'
+      );
     }
   });
 
@@ -79,5 +87,18 @@ describe('Promise ESNext test suite', () => {
     ];
 
     await expect(MyPromise.race(promises)).rejects.toEqual(1);
+  });
+
+  it('Empty array input should not throw error', async () => {
+    await expect(MyPromise.all([])).resolves.toEqual([]);
+    await expect(MyPromise.allSettled([])).resolves.toEqual([]);
+    try {
+      await MyPromise.any([]);
+    } catch (e) {
+      expect((e as AggregateError).errors).toEqual([]);
+      expect((e as AggregateError).message).toEqual(
+        'All promises were rejected'
+      );
+    }
   });
 });

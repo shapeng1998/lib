@@ -208,6 +208,10 @@ class MyPromise<T = unknown> {
             }
           );
         }
+
+        if (cnt === idx) {
+          resolve(results);
+        }
       } catch (e) {
         reject(e);
       }
@@ -232,14 +236,16 @@ class MyPromise<T = unknown> {
               cnt++;
 
               if (cnt === idx) {
-                reject(new AggregateError(errors));
+                reject(
+                  new AggregateError(errors, 'All promises were rejected')
+                );
               }
             }
           );
         }
 
         if (cnt === idx) {
-          reject(new AggregateError(errors));
+          reject(new AggregateError(errors, 'All promises were rejected'));
         }
       } catch (e) {
         reject(e);
