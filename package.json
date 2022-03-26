@@ -50,5 +50,8 @@
   "prettier": {
     "singleQuote": true,
     "semi": true
+  },
+  "dependencies": {
+    "node-fetch": "^3.2.3"
   }
 }
