@@ -1,2 +1,2 @@
-export * from './sort';
-export * from './priorityQueue';
+export * from './sort'
+export * from './priorityQueue'

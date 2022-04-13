@@ -1,2 +1,2 @@
-export { throttle } from './throttle';
-export { debounce } from './debounce';
+export { throttle } from './throttle'
+export { debounce } from './debounce'

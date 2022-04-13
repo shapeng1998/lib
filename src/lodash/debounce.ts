@@ -1,21 +1,19 @@
-import { DebouncedFunc } from './types';
+import type { DebouncedFunc } from './types'
 
-export function debounce<T extends (...args: any) => any>(
+export function debounce<T extends(...args: any) => any>(
   this: any,
   func: T,
-  wait: number = 0
+  wait = 0,
 ): DebouncedFunc<T> {
-  const thisArg = this;
+  let timeout: number
+  let res: ReturnType<T>
 
-  let timeout: number;
-  let res: ReturnType<T>;
-
-  return function (...args) {
-    clearTimeout(timeout);
+  return (...args) => {
+    clearTimeout(timeout)
     timeout = setTimeout(() => {
-      res = func.apply(thisArg, args);
-    }, wait);
+      res = func.apply(this, args)
+    }, wait)
 
-    return res;
-  };
+    return res
+  }
 }

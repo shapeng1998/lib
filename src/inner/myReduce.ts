@@ -6,14 +6,13 @@ export function myReduce<T = unknown, U = unknown>(
     currentIndex: number,
     array: T[]
   ) => U,
-  initialValue?: U
+  initialValue?: U,
 ): U {
-  let i = initialValue !== undefined ? 0 : 1;
-  let acc: U = initialValue ?? (arr[0] as unknown as U);
+  let i = initialValue !== undefined ? 0 : 1
+  let acc: U = initialValue ?? (arr[0] as unknown as U)
 
-  for (; i < arr.length; i++) {
-    acc = callbackfn(acc, arr[i], i, arr);
-  }
+  for (; i < arr.length; i++)
+    acc = callbackfn(acc, arr[i], i, arr)
 
-  return acc;
+  return acc
 }

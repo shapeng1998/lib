@@ -2,6 +2,19 @@
   "name": "@shapeng1998/lib",
   "version": "0.0.20",
   "description": "Personal handwritten JavaScript library.",
+  "keywords": [
+    "javascript",
+    "algorithms",
+    "library",
+    "promise",
+    "lodash"
+  ],
+  "license": "MIT",
+  "author": "shapeng1998 <jack@shapeng1998.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shapeng1998/lib.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -12,35 +25,29 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shapeng1998/lib.git"
-  },
   "bugs": {
     "url": "https://github.com/shapeng1998/lib/issues"
   },
   "homepage": "https://github.com/shapeng1998/lib",
-  "author": "shapeng1998 <jack@shapeng1998.com>",
-  "license": "MIT",
-  "keywords": [
-    "javascript",
-    "algorithms",
-    "library",
-    "promise",
-    "lodash"
-  ],
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build --watch src",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm build",
     "tempTest": "pnpm build && node onlyForTest.mjs",
     "test": "vitest",
     "testPromise": "rimraf dist && tsup src/promise/promise.ts --format cjs --clean && promises-aplus-tests dist/promise.js"
   },
+  "dependencies": {
+    "node-fetch": "^3.2.3"
+  },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.20.6",
+    "eslint": "^8.13.0",
     "promises-aplus-tests": "^2.1.2",
     "rimraf": "^3.0.2",
     "tsup": "^5.11.11",
@@ -50,8 +57,5 @@
   "prettier": {
     "singleQuote": true,
     "semi": true
-  },
-  "dependencies": {
-    "node-fetch": "^3.2.3"
   }
 }

@@ -1,3 +1,3 @@
-import MyPromise from './promise';
+import MyPromise from './promise'
 
-export { MyPromise };
+export { MyPromise }
