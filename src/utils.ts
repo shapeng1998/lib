@@ -7,5 +7,5 @@ export function getRandomArray(length: number, min: number, max: number) {
 }
 
 export async function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

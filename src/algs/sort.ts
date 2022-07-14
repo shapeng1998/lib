@@ -4,8 +4,7 @@ type SortFunction = <T>(arr: T[], compare: CompareFn<T>) => T[]
 
 export const quickSort: SortFunction = (arr, compare) => {
   function sort(l: number, r: number) {
-    if (l >= r)
-      return
+    if (l >= r) return
 
     let i = l - 1
     let j = r + 1
@@ -16,8 +15,7 @@ export const quickSort: SortFunction = (arr, compare) => {
       while (compare(arr[i], x) < 0)
       do j--
       while (compare(arr[j], x) > 0)
-      if (i < j)
-        [arr[i], arr[j]] = [arr[j], arr[i]]
+      if (i < j) [arr[i], arr[j]] = [arr[j], arr[i]]
     }
 
     sort(l, j)
@@ -31,8 +29,7 @@ export const quickSort: SortFunction = (arr, compare) => {
 
 export const mergeSort: SortFunction = (arr, compare) => {
   function sort(l: number, r: number) {
-    if (l >= r)
-      return
+    if (l >= r) return
 
     const mid = (l + r) >>> 1
     sort(l, mid)
@@ -45,8 +42,7 @@ export const mergeSort: SortFunction = (arr, compare) => {
     let j = mid + 1
 
     while (i <= mid && j <= r) {
-      if (compare(arr[i], arr[j]) <= 0)
-        tmp[k++] = arr[i++]
+      if (compare(arr[i], arr[j]) <= 0) tmp[k++] = arr[i++]
       else tmp[k++] = arr[j++]
     }
     while (i <= mid) tmp[k++] = arr[i++]

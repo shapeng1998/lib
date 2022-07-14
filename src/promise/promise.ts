@@ -13,7 +13,7 @@ import type {
 class MyPromise<T = unknown> {
   #state: State = 'PENDING'
   #value: T = undefined as unknown as T
-  #reason: any = undefined
+  #reason: unknown = undefined
 
   #onFulfilledCallbacks: Callbacks = []
   #onRejectedCallbacks: Callbacks = []
@@ -23,7 +23,7 @@ class MyPromise<T = unknown> {
       if (this.#state === 'PENDING') {
         this.#state = 'FULFILLED'
         this.#value = value as T
-        this.#onFulfilledCallbacks.forEach(cb => cb())
+        this.#onFulfilledCallbacks.forEach((cb) => cb())
       }
     }
 
@@ -31,28 +31,27 @@ class MyPromise<T = unknown> {
       if (this.#state === 'PENDING') {
         this.#state = 'REJECTED'
         this.#reason = reason
-        this.#onRejectedCallbacks.forEach(cb => cb())
+        this.#onRejectedCallbacks.forEach((cb) => cb())
       }
     }
 
     try {
       executor(resolve, reject)
-    }
-    catch (e) {
+    } catch (e) {
       reject(e)
     }
   }
 
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?: OnFulfilled<T, TResult1>,
-    onrejected?: OnRejected<TResult2>,
+    onrejected?: OnRejected<TResult2>
   ): MyPromise<TResult1 | TResult2> {
-    onfulfilled
-      = typeof onfulfilled === 'function'
+    onfulfilled =
+      typeof onfulfilled === 'function'
         ? onfulfilled
         : (value: T | TResult1) => value as TResult1
-    onrejected
-      = typeof onrejected === 'function'
+    onrejected =
+      typeof onrejected === 'function'
         ? onrejected
         : (reason) => {
             throw reason
@@ -64,8 +63,7 @@ class MyPromise<T = unknown> {
           try {
             const x = onfulfilled!(this.#value)
             resolvePromise(promise, x, resolve, reject)
-          }
-          catch (e) {
+          } catch (e) {
             reject(e)
           }
         })
@@ -76,8 +74,7 @@ class MyPromise<T = unknown> {
           try {
             const x = onrejected!(this.#reason)
             resolvePromise(promise, x, resolve, reject)
-          }
-          catch (e) {
+          } catch (e) {
             reject(e)
           }
         })
@@ -89,8 +86,7 @@ class MyPromise<T = unknown> {
             try {
               const x = onfulfilled!(this.#value)
               resolvePromise(promise, x, resolve, reject)
-            }
-            catch (e) {
+            } catch (e) {
               reject(e)
             }
           })
@@ -100,8 +96,7 @@ class MyPromise<T = unknown> {
             try {
               const x = onrejected!(this.#reason)
               resolvePromise(promise, x, resolve, reject)
-            }
-            catch (e) {
+            } catch (e) {
               reject(e)
             }
           })
@@ -113,14 +108,13 @@ class MyPromise<T = unknown> {
   }
 
   catch<TResult = never>(
-    onRejected?: OnRejected<TResult>,
+    onRejected?: OnRejected<TResult>
   ): MyPromise<T | TResult> {
     return this.then(undefined, onRejected)
   }
 
   finally(onfinally?: OnFinally): MyPromise<T> {
-    if (typeof onfinally !== 'function')
-      return this.then(onfinally, onfinally)
+    if (typeof onfinally !== 'function') return this.then(onfinally, onfinally)
 
     return this.then(
       (value) => {
@@ -130,29 +124,28 @@ class MyPromise<T = unknown> {
         return MyPromise.resolve(onfinally()).then(() => {
           throw reason
         })
-      },
+      }
     )
   }
 
   static resolve(): MyPromise<void>
   static resolve<T>(value: T | MyPromiseLike<T>): MyPromise<T>
   static resolve<T>(value?: T | MyPromiseLike<T>): MyPromise<T> {
-    if (value instanceof MyPromise)
-      return value
+    if (value instanceof MyPromise) return value
 
     return new MyPromise((resolve) => {
       resolve(value!)
     })
   }
 
-  static reject<T = never>(reason?: any): MyPromise<T> {
+  static reject<T = never>(reason?: unknown): MyPromise<T> {
     return new MyPromise((_resolve, reject) => {
       reject(reason)
     })
   }
 
   static all<T>(
-    values: Iterable<T | MyPromiseLike<T>>,
+    values: Iterable<T | MyPromiseLike<T>>
   ): MyPromise<Awaited<T>[]> {
     return new MyPromise((resolve, reject) => {
       try {
@@ -166,22 +159,19 @@ class MyPromise<T = unknown> {
             results[i] = value as Awaited<T>
             cnt++
 
-            if (cnt === idx)
-              resolve(results)
+            if (cnt === idx) resolve(results)
           }, reject)
         }
 
-        if (cnt === idx)
-          resolve(results)
-      }
-      catch (e) {
+        if (cnt === idx) resolve(results)
+      } catch (e) {
         reject(e)
       }
     })
   }
 
   static allSettled<T>(
-    values: Iterable<T | MyPromiseLike<T>>,
+    values: Iterable<T | MyPromiseLike<T>>
   ): MyPromise<PromiseSettledResult<Awaited<T>>[]> {
     return new MyPromise((resolve, reject) => {
       try {
@@ -196,23 +186,19 @@ class MyPromise<T = unknown> {
               results[i] = { status: 'fulfilled', value: value as Awaited<T> }
               cnt++
 
-              if (cnt === idx)
-                resolve(results)
+              if (cnt === idx) resolve(results)
             },
             (reason) => {
               results[i] = { status: 'rejected', reason }
               cnt++
 
-              if (cnt === idx)
-                resolve(results)
-            },
+              if (cnt === idx) resolve(results)
+            }
           )
         }
 
-        if (cnt === idx)
-          resolve(results)
-      }
-      catch (e) {
+        if (cnt === idx) resolve(results)
+      } catch (e) {
         reject(e)
       }
     })
@@ -236,25 +222,22 @@ class MyPromise<T = unknown> {
               cnt++
 
               if (cnt === idx) {
-                reject(
-                  new AggregateError(errors, 'All promises were rejected'),
-                )
+                reject(new AggregateError(errors, 'All promises were rejected'))
               }
-            },
+            }
           )
         }
 
         if (cnt === idx)
           reject(new AggregateError(errors, 'All promises were rejected'))
-      }
-      catch (e) {
+      } catch (e) {
         reject(e)
       }
     })
   }
 
   static race<T>(
-    values: Iterable<T | MyPromiseLike<T>>,
+    values: Iterable<T | MyPromiseLike<T>>
   ): MyPromise<Awaited<T>> {
     return new MyPromise((resolve, reject) => {
       try {
@@ -263,8 +246,7 @@ class MyPromise<T = unknown> {
             resolve(value as Awaited<T>)
           }, reject)
         }
-      }
-      catch (e) {
+      } catch (e) {
         reject(e)
       }
     })
@@ -275,12 +257,10 @@ function resolvePromise<T>(
   promise: MyPromise<T>,
   x: T | MyPromiseLike<T>,
   resolve: Resolve<T>,
-  reject: Reject,
+  reject: Reject
 ) {
   if (promise === x) {
-    return reject(
-      TypeError('Chaining cycle detected for promise #<MyPromise>'),
-    )
+    return reject(TypeError('Chaining cycle detected for promise #<MyPromise>'))
   }
 
   let called = false
@@ -291,37 +271,31 @@ function resolvePromise<T>(
         then.call(
           x,
           (value) => {
-            if (called)
-              return
+            if (called) return
             called = true
             resolvePromise(promise, value, resolve, reject)
           },
           (reason) => {
-            if (called)
-              return
+            if (called) return
             called = true
             reject(reason)
-          },
+          }
         )
-      }
-      else {
+      } else {
         resolve(x)
       }
-    }
-    catch (e) {
-      if (called)
-        return
+    } catch (e) {
+      if (called) return
       called = true
       reject(e)
     }
-  }
-  else {
+  } else {
     resolve(x)
   }
 }
 
 // @ts-expect-error only for testing
-MyPromise.deferred = function() {
+MyPromise.deferred = function () {
   const res = {} as any
   res.promise = new MyPromise((resolve, reject) => {
     res.resolve = resolve

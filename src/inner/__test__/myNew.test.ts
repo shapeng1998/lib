@@ -3,12 +3,12 @@ import { myNew } from '../myNew'
 
 describe('new inner function', () => {
   it('new instance should work', () => {
-    const Person = function(this: any, name: string) {
+    const Person = function (this: any, name: string) {
       this.name = name
       this.age = 10
     } as any
 
-    Person.prototype.greeting = function() {
+    Person.prototype.greeting = function () {
       return `${this.name} ${this.age}`
     }
 

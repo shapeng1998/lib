@@ -7,14 +7,13 @@ describe('Heap algorithms', () => {
   const nums = getRandomArray(10, -100, 100)
 
   it('Push', () => {
-    nums.forEach(num => heap.push(num))
+    nums.forEach((num) => heap.push(num))
     expect(heap.size).toBe(nums.length)
   })
 
   it('Pop', () => {
     const sorted = [...nums].sort((a, b) => a - b)
-    for (let i = 0; i < 10; i++)
-      expect(heap.pop()).toBe(sorted[i])
+    for (let i = 0; i < 10; i++) expect(heap.pop()).toBe(sorted[i])
   })
 
   it('Null front', () => {
@@ -25,7 +24,7 @@ describe('Heap algorithms', () => {
   it('Max heap', () => {
     const sorted = [1, 2, 3, 4]
     const maxHeap = new PriorityQueue<number>((a, b) => b - a)
-    sorted.forEach(x => maxHeap.push(x))
+    sorted.forEach((x) => maxHeap.push(x))
     expect(maxHeap.front()).toBe(sorted[sorted.length - 1])
   })
 })

@@ -43,19 +43,16 @@
     "testPromise": "rimraf dist && tsup src/promise/promise.ts --format cjs --clean && promises-aplus-tests dist/promise.js"
   },
   "dependencies": {
-    "node-fetch": "^3.2.3"
+    "node-fetch": "^3.2.8"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.23.0",
-    "eslint": "^8.13.0",
+    "@shapeng1998/eslint-config": "^0.6.3",
+    "eslint": "^8.19.0",
+    "prettier": "^2.7.1",
     "promises-aplus-tests": "^2.1.2",
     "rimraf": "^3.0.2",
-    "tsup": "^5.11.11",
-    "typescript": "^4.5.4",
-    "vitest": "^0.1.23"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "semi": true
+    "tsup": "^6.1.3",
+    "typescript": "^4.7.4",
+    "vitest": "^0.18.0"
   }
 }

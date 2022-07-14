@@ -10,17 +10,16 @@ class PriorityQueue<T = unknown> {
   }
 
   private _swap(a: number, b: number) {
-    const { _heap } = this;
+    const { _heap } = this
 
-    [_heap[a], _heap[b]] = [_heap[b], _heap[a]]
+    ;[_heap[a], _heap[b]] = [_heap[b], _heap[a]]
   }
 
   private _down(u: number) {
     const { _heap, _compare } = this
 
     let t = u
-    if (u * 2 <= this.size && _compare(_heap[u * 2], _heap[t]) < 0)
-      t = u * 2
+    if (u * 2 <= this.size && _compare(_heap[u * 2], _heap[t]) < 0) t = u * 2
 
     if (u * 2 + 1 <= this.size && _compare(_heap[u * 2 + 1], _heap[t]) < 0)
       t = u * 2 + 1
@@ -49,8 +48,7 @@ class PriorityQueue<T = unknown> {
   }
 
   public front() {
-    if (this.isEmpty())
-      return null
+    if (this.isEmpty()) return null
 
     return this._heap[1]
   }

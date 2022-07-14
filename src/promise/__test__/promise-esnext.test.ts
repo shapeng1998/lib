@@ -18,7 +18,7 @@ const mySleepReject = (ms: number, reason: any) => {
 }
 
 describe('Promise ESNext test suite', () => {
-  it('Promise.all should work', async() => {
+  it('Promise.all should work', async () => {
     const promises = [
       mySleepResolve(10, 1),
       mySleepResolve(20, 2),
@@ -28,11 +28,11 @@ describe('Promise ESNext test suite', () => {
     await expect(MyPromise.all(promises)).resolves.toEqual([1, 2, 3])
 
     await expect(
-      MyPromise.all([...promises, mySleepReject(10, 'error')]),
+      MyPromise.all([...promises, mySleepReject(10, 'error')])
     ).rejects.toEqual('error')
   })
 
-  it('Promise.allSettled should work', async() => {
+  it('Promise.allSettled should work', async () => {
     const promises = [
       mySleepResolve(10, 1),
       mySleepReject(20, 2),
@@ -46,7 +46,7 @@ describe('Promise ESNext test suite', () => {
     ])
   })
 
-  it('Promise.any should work', async() => {
+  it('Promise.any should work', async () => {
     let promises = [
       mySleepResolve(10, 1),
       mySleepReject(20, 2),
@@ -63,16 +63,15 @@ describe('Promise ESNext test suite', () => {
 
     try {
       await MyPromise.any(promises)
-    }
-    catch (e) {
+    } catch (e) {
       expect((e as AggregateError).errors).toEqual([1, 2, 3])
       expect((e as AggregateError).message).toEqual(
-        'All promises were rejected',
+        'All promises were rejected'
       )
     }
   })
 
-  it('Promise.race should work', async() => {
+  it('Promise.race should work', async () => {
     let promises = [
       mySleepResolve(10, 1),
       mySleepReject(20, 2),
@@ -90,16 +89,15 @@ describe('Promise ESNext test suite', () => {
     await expect(MyPromise.race(promises)).rejects.toEqual(1)
   })
 
-  it('Empty array input should not throw error', async() => {
+  it('Empty array input should not throw error', async () => {
     await expect(MyPromise.all([])).resolves.toEqual([])
     await expect(MyPromise.allSettled([])).resolves.toEqual([])
     try {
       await MyPromise.any([])
-    }
-    catch (e) {
+    } catch (e) {
       expect((e as AggregateError).errors).toEqual([])
       expect((e as AggregateError).message).toEqual(
-        'All promises were rejected',
+        'All promises were rejected'
       )
     }
   })

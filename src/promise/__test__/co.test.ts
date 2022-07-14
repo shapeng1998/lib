@@ -21,26 +21,26 @@ function* helloGenerator(): Generator<number, number, number> {
 }
 
 function* fetchUser(): Generator<Object> {
-  const user = yield fetch(url).then(res => res.json())
+  const user = yield fetch(url).then((res) => res.json())
   return user
 }
 
 describe('co test suite', () => {
-  it('co function should automaticly execute the generator function', async() => {
+  it('co function should automaticly execute the generator function', async () => {
     expect(
       await co(function* () {
         return 'hello'
-      }),
+      })
     ).toEqual('hello')
 
     expect(
       await co(function* () {
         const value1 = yield resolveSetTimeout('hello', 500)
         const value2 = yield resolveSetTimeout('world', 500)
-        const value3 = yield * fetchUser()
-        const value4 = yield * helloGenerator()
+        const value3 = yield* fetchUser()
+        const value4 = yield* helloGenerator()
         return [value1, value2, value3, value4]
-      }),
+      })
     ).toEqual([
       'hello',
       'world',

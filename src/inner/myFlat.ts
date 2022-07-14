@@ -2,7 +2,7 @@ import { myReduce } from './myReduce'
 
 export function myFlat<A, D extends number = 1>(
   arr: A,
-  depth = 1,
+  depth = 1
 ): FlatArray<A, D>[] {
   return myReduce(
     arr as unknown as FlatArray<A, D>[],
@@ -12,6 +12,6 @@ export function myFlat<A, D extends number = 1>(
 
       return prev.concat(cur as FlatArray<A, D>)
     },
-    [] as FlatArray<A, D>[],
+    [] as FlatArray<A, D>[]
   )
 }
